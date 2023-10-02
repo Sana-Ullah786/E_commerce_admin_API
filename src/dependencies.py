@@ -1,17 +1,13 @@
-import logging
 import os
-from typing import Generator, Tuple
+from typing import Generator
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-# from src.exceptions import custom_exception
 from src.models.database import SessionLocal
-# from src.models.user import User
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = os.getenv("JWT_ALGORITHM")
@@ -22,10 +18,11 @@ bcryp_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 
 
-
 def get_db() -> Generator[Session, None, None]:
     """
-    A generetor function that yields the DB session
+    A generator function that yields the database session.
+    Yields:
+        Session: A database session.
     """
     try:
         db = SessionLocal()
@@ -36,8 +33,14 @@ def get_db() -> Generator[Session, None, None]:
 
 def get_current_user(token: str = Depends(oauth2_bearer)) -> dict:
     """
-    Fetches user details for a given token.
-    To be used as a dependency by authenticated routes for users
+    Fetches user details for a given JWT token.
+    Args:
+        token (str): The JWT token to decode and extract user information.
+    Returns:
+        dict: A dictionary containing user details extracted from the token.
+    Raises:
+        HTTPException: If the token is invalid or missing user information, it raises a
+            401 Unauthorized exception.
     """
     try:
         payload = jwt.decode(
@@ -45,6 +48,13 @@ def get_current_user(token: str = Depends(oauth2_bearer)) -> dict:
             SECRET_KEY,
             algorithms=[ALGORITHM],
         )
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+            )
+        return {"username": username}
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -52,13 +62,13 @@ def get_current_user(token: str = Depends(oauth2_bearer)) -> dict:
         )
 
 
-def get_password_hash(password: str) -> str:
-    """A helper function that hashes a given password"""
-
-    return bcryp_context.hash(password)
-
-
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """A helper function that verifies a given password against a hashed password"""
-
+    """
+    Verifies a given plain password against a hashed password.
+    Args:
+        plain_password (str): The plain text password to be verified.
+        hashed_password (str): The hashed password against which verification is performed.
+    Returns:
+        bool: True if the plain password matches the hashed password; otherwise, False.
+    """
     return bcryp_context.verify(plain_password, hashed_password)
