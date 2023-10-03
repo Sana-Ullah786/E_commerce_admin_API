@@ -1,9 +1,11 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
+
 from routes.api import router
+from src.demo_data.insert_data import insert_all_data
 from src.models import all_models
 from src.models.database import engine
-from src.demo_data.insert_data import  insert_all_data
+
 load_dotenv()
 
 # Drop all existing tables
