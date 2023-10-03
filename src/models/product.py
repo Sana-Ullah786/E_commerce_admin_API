@@ -27,6 +27,3 @@ class Product(Base):
 
     # Relationship with Inventory
     # inventory = relationship("Inventory", back_populates="product")
-
-    # Relationship with ProductMerchant
-    # product_merchant = relationship("ProductMerchant", back_populates="product")
