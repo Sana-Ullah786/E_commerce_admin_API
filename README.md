@@ -1,6 +1,9 @@
-# E_commerce_admin_API
+# ADMIN CREDENTIALS: (To get access token as each endpoint is accessible by ADMIN only and access demo data populated in Database)
+## username = admin
+## password = Password123!
+# NOTE: Demo data is also will be populated when you run the server
 
-# Your Project Name
+# E_commerce_admin_API
 
 A brief description of your project and its functionality.
 
