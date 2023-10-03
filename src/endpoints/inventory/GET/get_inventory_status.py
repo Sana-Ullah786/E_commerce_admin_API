@@ -104,6 +104,3 @@ async def get_status_by_merchant(merchant_id: int = Path(gt=0), db: Session = De
         "low_inventory_items": low_inventory,
         "good_inventory_items" : enough_inventory
     }
-         
-    
-     

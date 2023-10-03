@@ -4,8 +4,8 @@ from src.endpoints import auth, category, merchant, product, sales, inventory
 
 router = APIRouter()
 router.include_router(auth.router)
-router.include_router(sales.router)
 router.include_router(product.router)
 router.include_router(category.router)
 router.include_router(merchant.router)
 router.include_router(inventory.router)
+router.include_router(sales.router)

@@ -146,12 +146,39 @@ def update_all_inventories():
         db.refresh(new_inventory_log)
     print("Inventory updated successfully")
 
+# Helper function to insert sales randomly
+def insert_sales():
+    db = next(get_db())
+    for product in db.query(all_models.Product):
+        number_of_sales_to_be_inserted = fake.random_int(min=1, max=3)
+        for _ in range(number_of_sales_to_be_inserted):
+            quantity = fake.random_int(min=1, max=5)
+            new_sale = all_models.Sale(
+                product_id = product.product_id,
+                quantity_sold = quantity,
+                region = fake.city(),
+                revenue = product.price * quantity,
+                # sales date max till 1 year and today, past month and past week
+                sales_date = fake.date_time_between(start_date="-1y", end_date="now")
+            )
+            db.add(new_sale)
+            db.commit()
+            db.refresh(new_sale)
+            # update inventory of the product
+            inventory = db.query(all_models.Inventory).filter(all_models.Inventory.product_id == product.product_id).first()
+            inventory.current_stock = inventory.current_stock - quantity
+            db.commit()
+            db.refresh(inventory)
+
+    print("Sales inserted successfully")
+
 
 
 def insert_all_data():
     insert_user()
-    insert_categories()
     insert_merchants()
+    insert_categories()
     insert_random_products()
     insert_inventory()
     update_all_inventories()
+    insert_sales()
