@@ -8,9 +8,7 @@ from src.models.database import engine
 
 load_dotenv()
 
-# Drop all existing tables
-all_models.Base.metadata.drop_all(engine)
-# delete all tables and recreate here
+
 all_models.Base.metadata.create_all(engine)
 
 
