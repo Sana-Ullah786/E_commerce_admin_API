@@ -31,7 +31,7 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-def get_current_user(token: str = Depends(oauth2_bearer)) -> dict:
+def get_current_admin(token: str = Depends(oauth2_bearer)) -> dict:
     """
     Fetches user details for a given JWT token.
     Args:
@@ -49,12 +49,18 @@ def get_current_user(token: str = Depends(oauth2_bearer)) -> dict:
             algorithms=[ALGORITHM],
         )
         username: str = payload.get("sub")
+        is_admin: bool = payload.get("is_admin")
         if username is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
             )
-        return {"username": username}
+        elif not is_admin:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User is not an admin",
+            )
+        return {"username": username, "is_admin": is_admin}
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

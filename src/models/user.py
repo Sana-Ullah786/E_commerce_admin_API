@@ -1,6 +1,6 @@
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, func, DateTime, Boolean
 from sqlalchemy.orm import Mapped, deferred, mapped_column
-
+from datetime import datetime
 from src.models.database import Base
 
 
@@ -16,4 +16,12 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(32), unique=True, index=True)
     password: Mapped[str] = deferred(
         mapped_column(String(256), unique=True, index=True)
+    )
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), onupdate=func.now(), nullable=True
     )

@@ -29,9 +29,6 @@ class InventoryLog(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), onupdate=func.now(), nullable=True
-    )
 
     # Relationship with Inventory and Product
     inventory = relationship("Inventory", back_populates="logs")

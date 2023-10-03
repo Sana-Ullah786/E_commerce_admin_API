@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, status
 
-from src.dependencies import get_current_user
+from src.dependencies import get_current_admin
 from src.endpoints.sales.router_init import router
 
 

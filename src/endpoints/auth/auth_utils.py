@@ -39,7 +39,7 @@ def create_token(user: User, expire_time_in_min: int) -> str:
     Returns:
         str: The JWT token as a string.
     """
-    encode = {"sub": user.username, "id": user.id}
+    encode = {"sub": user.username, "id": user.id, "is_admin": user.is_admin}
     expire = datetime.utcnow() + timedelta(minutes=expire_time_in_min)
     encode.update({"exp": expire})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)

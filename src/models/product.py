@@ -41,3 +41,6 @@ class Product(Base):
 
     # Relationship with InventoryLog
     logs = relationship("InventoryLog", back_populates="product")
+
+    # Relationship with Sale
+    sales = relationship("Sale", back_populates="product")
