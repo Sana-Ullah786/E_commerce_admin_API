@@ -1,6 +1,3 @@
-import json
-import re
-
 from pydantic import BaseModel, constr
 
 
