@@ -6,5 +6,5 @@ router = APIRouter(
     prefix="/category",
     tags=["category"],
     responses={401: {"user": "Not authorized"}},
-    # dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(get_current_admin)],
 )
