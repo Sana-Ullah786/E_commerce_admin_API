@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.endpoints import auth, category, merchant, product, sales, inventory
+from src.endpoints import auth, category, inventory, merchant, product, sales
 
 router = APIRouter()
 router.include_router(auth.router)

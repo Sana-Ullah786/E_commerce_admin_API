@@ -39,12 +39,16 @@ def insert_user():
     db = next(get_db())
     # unhashed Password is = Password123!
     new_user = all_models.User(
-        username="admin", password="$2a$12$55.zn7lW0z594G45Sqj7FOKALV1NIFZKvtMB55BjdIJbxdk65O8m6", is_admin=True, is_deleted=False
+        username="admin",
+        password="$2a$12$55.zn7lW0z594G45Sqj7FOKALV1NIFZKvtMB55BjdIJbxdk65O8m6",
+        is_admin=True,
+        is_deleted=False,
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     print("User inserted successfully")
+
 
 fake = Faker()
 
@@ -101,26 +105,27 @@ def insert_inventory():
     # for all product ids in db, add current stock between 40 and 50 ramdom using faker and add threshold between 5 and 10 random
     db = next(get_db())
     for product in db.query(all_models.Product):
-        new_inventory = all_models.Inventory (
-            product_id = product.product_id,
-            current_stock = fake.random_int(min=40, max=50),
-            low_stock_threshold = fake.random_int(min=5, max=10)
+        new_inventory = all_models.Inventory(
+            product_id=product.product_id,
+            current_stock=fake.random_int(min=40, max=50),
+            low_stock_threshold=fake.random_int(min=5, max=10),
         )
         db.add(new_inventory)
         db.commit()
         db.refresh(new_inventory)
         # insert inventory log
-        new_inventory_log = all_models.InventoryLog (
-            inventory_id = new_inventory.inventory_id,
-            product_id = product.product_id,
-            previous_stock = 0,
-            new_stock = new_inventory.current_stock,
-            total_stock = new_inventory.current_stock
+        new_inventory_log = all_models.InventoryLog(
+            inventory_id=new_inventory.inventory_id,
+            product_id=product.product_id,
+            previous_stock=0,
+            new_stock=new_inventory.current_stock,
+            total_stock=new_inventory.current_stock,
         )
         db.add(new_inventory_log)
         db.commit()
         db.refresh(new_inventory_log)
     print("Inventory inserted successfully")
+
 
 # helper function to update inventories
 def update_all_inventories():
@@ -132,19 +137,20 @@ def update_all_inventories():
         db.commit()
         db.refresh(inventory)
         # insert inventory log
-        new_inventory_log = all_models.InventoryLog (
-            inventory_id = inventory.inventory_id,
-            product_id = inventory.product_id,
-            previous_stock = _previous_stock,
-            new_stock = new_stock,
-            total_stock = new_stock + _previous_stock,
+        new_inventory_log = all_models.InventoryLog(
+            inventory_id=inventory.inventory_id,
+            product_id=inventory.product_id,
+            previous_stock=_previous_stock,
+            new_stock=new_stock,
+            total_stock=new_stock + _previous_stock,
             # get random date between past 10 days and next 15 days
-            created_at = fake.date_time_between(start_date="-10d", end_date="+15d")
+            created_at=fake.date_time_between(start_date="-10d", end_date="+15d"),
         )
         db.add(new_inventory_log)
         db.commit()
         db.refresh(new_inventory_log)
     print("Inventory updated successfully")
+
 
 # Helper function to insert sales randomly
 def insert_sales():
@@ -154,24 +160,27 @@ def insert_sales():
         for _ in range(number_of_sales_to_be_inserted):
             quantity = fake.random_int(min=1, max=5)
             new_sale = all_models.Sale(
-                product_id = product.product_id,
-                quantity_sold = quantity,
-                region = fake.city(),
-                revenue = product.price * quantity,
+                product_id=product.product_id,
+                quantity_sold=quantity,
+                region=fake.city(),
+                revenue=product.price * quantity,
                 # sales date max till 1 year and today, past month and past week
-                sales_date = fake.date_time_between(start_date="-1y", end_date="now")
+                sales_date=fake.date_time_between(start_date="-1y", end_date="now"),
             )
             db.add(new_sale)
             db.commit()
             db.refresh(new_sale)
             # update inventory of the product
-            inventory = db.query(all_models.Inventory).filter(all_models.Inventory.product_id == product.product_id).first()
+            inventory = (
+                db.query(all_models.Inventory)
+                .filter(all_models.Inventory.product_id == product.product_id)
+                .first()
+            )
             inventory.current_stock = inventory.current_stock - quantity
             db.commit()
             db.refresh(inventory)
 
     print("Sales inserted successfully")
-
 
 
 def insert_all_data():

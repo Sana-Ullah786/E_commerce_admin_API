@@ -8,11 +8,8 @@ from src.models import all_models
 
 
 @router.get("/", response_model=None)
-async def get_all_sales(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> JSONResponse:
+async def get_all_sales(
+    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+) -> JSONResponse:
     sales = db.query(all_models.Sale).offset(skip).limit(limit).all()
-    return {
-        "status": status.HTTP_200_OK,
-        "message": "Sales found",
-        "data": sales
-    }
-
+    return {"status": status.HTTP_200_OK, "message": "Sales found", "data": sales}
